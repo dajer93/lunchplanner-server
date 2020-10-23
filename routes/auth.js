@@ -8,26 +8,40 @@ const User = require("../models/User");
 const router = express.Router();
 
 router.post("/login", passport.authenticate("local"), (req, res) => {
-  User.findOne({ username: req.body.username }, (err, user) => {
-    if (err) {
-      console.log("Error Happened In auth /token Route");
-    } else {
-      var payload = {
-        id: user.id,
-        expire: Date.now() + 1000 * 60 * 60 * 24 * 7, //7 days
-      };
-      var token = jwt.encode(payload, config.jwtSecret);
-      res.json({
-        token: token,
-      });
-    }
-  });
+  try {
+    User.findOne({ username: req.body.username }, (err, user) => {
+      if (err) {
+        console.log("Error Happened In auth /token Route");
+        res.statusCode = 401;
+        res.json(err);
+      } else {
+        if (!user) {
+          res.statusCode = 401;
+          res.json({ message: "No user" });
+        } else {
+          const payload = {
+            id: user.id,
+            expire: Date.now() + 1000 * 60 * 60 * 24 * 7, //7 days
+          };
+          const token = jwt.encode(payload, config.jwtSecret);
+          res.json({
+            token: token,
+          });
+        }
+      }
+    });
+  } catch (e) {
+    console.dir(e);
+    res.statusCode = 401;
+    res.setHeader("Content-Type", "application/json");
+    res.json(e);
+  }
 });
 
 router.post("/register", (req, res, next) => {
   const newUser = new User({
     username: req.body.email,
-    name: req.body.name
+    name: req.body.name,
   });
 
   User.register(newUser, req.body.password, function (err, user) {

@@ -4,6 +4,7 @@
   "description": "Simple weekly lunchplanner app's server.",
   "main": "server.js",
   "scripts": {
+    "build": "cd ../lunchplanner && rm -rf ./build && npm run build && rm -rf ../lunchplanner-server/public/* && cp -R ./build/* ../lunchplanner-server/public/ && cd ../lunchplanner-server && node server.js",
     "start": "node server.js",
     "test": "echo \"Error: no tests specified\" && exit 1"
   },
@@ -11,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
