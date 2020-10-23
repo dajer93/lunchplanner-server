@@ -46,6 +46,9 @@ router.post("/register", (req, res, next) => {
 
   User.register(newUser, req.body.password, function (err, user) {
     if (err) {
+      console.log(user);
+      console.log(newUser);
+      console.log(req.body.password);
       res.statusCode = 500;
       res.setHeader("Content-Type", "application/json");
       res.json({
