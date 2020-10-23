@@ -1,0 +1,15 @@
+{
+  "name": "lunchplanner-server",
+  "version": "0.0.1",
+  "description": "Simple weekly lunchplanner app's server.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no tests specified\" && exit 1"
+  },
+  "author": "dajer93",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
