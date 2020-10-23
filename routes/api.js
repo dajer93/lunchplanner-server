@@ -1,12 +1,15 @@
-const express = require('express')
+const express = require('express');
+const passport = require('passport');
+
+const auth = require('../middleware/auth')();
 
 const router = express.Router();
 
-router.get("/foods", (req, res, next) => {
+router.get("/recipes", auth.authenticate(), (req, res, next) => {
   res.json(["Tony", "Lisa", "Michael", "Ginger", "Food"]);
 });
 
-router.post("/foods", (req, res, next) => {
+router.post("/recipes", (req, res, next) => {
   res.json(["Tony", "Lisa", "Michael", "Ginger", "Food"]);
 });
 
