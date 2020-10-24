@@ -10,21 +10,7 @@ const calendarDaySchema = new mongoose.Schema({
     required: true,
     default: []
   },
-  offsetX: {
-    type: Number,
-    required: true,
-    default: 0
-  },
-  offsetY: {
-    type: Number,
-    required: true,
-    default: 0
-  },
-  imageUrl: {
-    type: String,
-    required: true
-  },
-  imageId: {
+  createdBy: {
     type: String,
     required: true
   }

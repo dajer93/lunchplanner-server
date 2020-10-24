@@ -12,6 +12,10 @@ const recipeSchema = new mongoose.Schema({
     type: Array,
     required: true,
     default: []
+  },
+  createdBy: {
+    type: String,
+    required: true
   }
 })
 
