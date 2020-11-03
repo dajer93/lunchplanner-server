@@ -1,10 +1,56 @@
 const express = require("express");
 const Calendar = require("../models/CalendarDay");
 const Recipe = require("../models/Recipe");
+const Ingredient = require("../models/Ingredient");
 
 const auth = require("../middleware/auth")();
 
 const router = express.Router();
+
+router.get("/ingredients", auth.authenticate(), async (req, res, next) => {
+  try {
+    const { _id: userId } = req.user || {};
+
+    if (!userId) {
+      res.statusCode = 401;
+      res.json({ ok: false, message: "Not authorized" });
+    }
+
+    const ingredients = await Ingredient.find({ createdBy: userId });
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json");
+    res.json(ingredients);
+  } catch (error) {
+    console.log(error);
+    res.statusCode = 500;
+    res.json({ ok: false, message: "Something went wrong" });
+  }
+});
+
+router.post("/ingredients", auth.authenticate(), async (req, res, next) => {
+  try {
+    const { _id: userId } = req.user || {};
+
+    if (!userId) {
+      res.statusCode = 401;
+      res.json({ ok: false, message: "Not authorized" });
+    }
+
+    const newIngredient = new Ingredient({
+      ...req.body,
+      createdBy: req.user._id,
+    });
+
+    const saveIngredient = await newIngredient.save();
+
+    res.statusCode = 200;
+    res.json(saveIngredient);
+  } catch (error) {
+    console.log(error);
+    res.statusCode = 500;
+    res.json({ ok: false, message: "Something went wrong" });
+  }
+});
 
 router.get("/recipes", auth.authenticate(), async (req, res, next) => {
   try {
