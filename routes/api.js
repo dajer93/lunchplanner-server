@@ -227,8 +227,7 @@ router.delete("/calendar/:date/:_id", auth.authenticate(), async (req, res, next
       res.json({ ok: false, message: "No date set" });
     }
 
-    const savedCalendarDays = await Calendar.find({ createdBy: userId });
-    const existingRecord = savedCalendarDays.find(({ date: savedDate }) => isSameDay(savedDate, date))
+    const existingRecord = await Calendar.findOne({ createdBy: userId, date });
 
     if (existingRecord) {
       const indexOfFood = existingRecord.foods.findIndex(
@@ -241,10 +240,15 @@ router.delete("/calendar/:date/:_id", auth.authenticate(), async (req, res, next
       ];
 
       existingRecord.save();
+
+      res.statusCode = 200;
+      res.json({ ok: true });
+    } else {
+      res.statusCode = 200;
+      res.json({ ok: false });
     }
 
-    res.statusCode = 200;
-    res.json({ ok: true });
+    
   } catch (error) {
     console.log(error);
     res.statusCode = 500;
