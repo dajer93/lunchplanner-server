@@ -7,6 +7,28 @@ const auth = require("../middleware/auth")();
 
 const router = express.Router();
 
+const isSameDay = (date1, date2) => {
+  let dateObject1 = date1;
+  let dateObject2 = date2;
+  if (typeof date1 === "string") {
+    dateObject1 = new Date(date1);
+  }
+  if (typeof date2 === "string") {
+    dateObject2 = new Date(date2);
+  }
+  if (typeof date1 === "number") {
+    dateObject1 = (new Date()).setTime(date1);
+  }
+  if (typeof date2 === "number") {
+    dateObject2 = (new Date()).setTime(date2);
+  }
+  return (
+    dateObject1.getDate() === dateObject2.getDate() &&
+    dateObject1.getMonth() === dateObject2.getMonth() &&
+    dateObject1.getYear() === dateObject2.getYear()
+  );
+}
+
 router.get("/ingredients", auth.authenticate(), async (req, res, next) => {
   try {
     const { _id: userId } = req.user || {};
@@ -161,7 +183,8 @@ router.post("/calendar", auth.authenticate(), async (req, res, next) => {
       res.json({ ok: false, message: "No date set" });
     }
 
-    const existingRecord = await Calendar.findOne({ createdBy: userId, date });
+    const savedCalendarDays = await Calendar.find({ createdBy: userId });
+    const existingRecord = savedCalendarDays.find(({ date: savedDate }) => isSameDay(savedDate, date))
 
     if (existingRecord) {
       existingRecord.foods = [...existingRecord.foods, ...foods];
@@ -204,7 +227,8 @@ router.delete("/calendar/:date/:_id", auth.authenticate(), async (req, res, next
       res.json({ ok: false, message: "No date set" });
     }
 
-    const existingRecord = await Calendar.findOne({ createdBy: userId, date });
+    const savedCalendarDays = await Calendar.find({ createdBy: userId });
+    const existingRecord = savedCalendarDays.find(({ date: savedDate }) => isSameDay(savedDate, date))
 
     if (existingRecord) {
       const indexOfFood = existingRecord.foods.findIndex(
